@@ -5,3 +5,15 @@
 .v-widget.googlemap {
     min-height: 200px;
 }
+
+.googlemap .tooltip {
+    font-family: Helvetica, Arial, Roboto, sans-serif;
+    font-size: 0.8em;
+    position: absolute;
+    z-index: 999;
+    background-color: #fff;
+    color: #555;
+    border: 1px solid #888;
+    padding: 3px;
+    cursor: default;
+}

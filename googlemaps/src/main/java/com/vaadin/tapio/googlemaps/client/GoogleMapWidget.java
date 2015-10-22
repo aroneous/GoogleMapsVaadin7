@@ -50,6 +50,7 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
+import com.vaadin.tapio.googlemaps.client.overlays.TooltipListener;
 
 public class GoogleMapWidget extends FlowPanel implements RequiresResize {
 
@@ -458,6 +459,15 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
 
             Polygon polygon = Polygon.newInstance(options);
             polygon.setPath(points);
+
+            final String tooltip = overlay.getTooltip();
+            if (tooltip != null) {
+                TooltipListener tooltipListener = new TooltipListener(map, tooltip);
+                polygon.addMouseOverHandler(tooltipListener.getMouseOverHandler());
+                polygon.addMouseMoveHandler(tooltipListener.getMouseMoveHandler());
+                polygon.addMouseOutMoveHandler(tooltipListener.getMouseOutHandler());
+            }
+
             polygon.setMap(map);
             polygonMap.put(polygon, overlay);
         }

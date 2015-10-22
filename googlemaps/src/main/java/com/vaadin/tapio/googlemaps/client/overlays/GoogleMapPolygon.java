@@ -33,6 +33,8 @@ public class GoogleMapPolygon implements Serializable {
 
     private boolean geodesic = false;
 
+    private String tooltip;
+
     /**
      * Instantiates a new polygon overlay using default values.
      */
@@ -236,6 +238,25 @@ public class GoogleMapPolygon implements Serializable {
      */
     public void setGeodesic(boolean geodesic) {
         this.geodesic = geodesic;
+    }
+
+    /**
+     * Retrieves the tooltip text for this polygon.
+     *
+     * @return Tooltip text, or {@code null} if none set.
+     */
+    public String getTooltip() {
+        return tooltip;
+    }
+
+    /**
+     * Sets content to display in a tooltip when the mouse pointer is hovering over this polygon.
+     *
+     * @param tooltip
+     *            Tooltip text, or {@code null} to use no tooltip.
+     */
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
     }
 
     public long getId() {

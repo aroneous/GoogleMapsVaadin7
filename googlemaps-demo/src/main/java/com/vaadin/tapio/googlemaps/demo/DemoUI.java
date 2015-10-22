@@ -220,6 +220,7 @@ public class DemoUI extends UI {
 
                         GoogleMapPolygon overlay = new GoogleMapPolygon(points,
                                 "#ae1f1f", 0.8, "#194915", 0.5, 3);
+                        overlay.setTooltip("Luonnonmaa");
                         googleMap.addPolygonOverlay(overlay);
                         event.getButton().setEnabled(false);
                     }
