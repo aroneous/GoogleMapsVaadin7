@@ -1,0 +1,26 @@
+<ivysettings>
+    <property name="ivy.settings.dir" value="C:/@hg-futrix/FutrixDev/default/common" />
+    
+    <properties file="${ivy.settings.dir}/ivysettings.properties" />
+    <properties file="${ivy.settings.dir}/${user.name}.properties" />
+    <properties file="${user.home}/futrix.properties" />
+    <property name="local-maven2-dir" value="${user.home}/.m2/repository" />
+
+    <caches defaultCacheDir="${ivy.cache.dir}" />
+    <settings defaultResolver="default-chain" />
+
+    <resolvers>
+        <chain name="default-chain" returnFirst="true" checkmodified="true" changingPattern=".*SNAPSHOT">
+
+            <filesystem name="local-maven" m2compatible="true" force="false" local="true">
+                <artifact pattern="${local-maven2-dir}/[organisation]/[module]/[revision]/[module]-[revision].[ext]" />
+                <ivy pattern="${local-maven2-dir}/[organisation]/[module]/[revision]/[module]-[revision].pom" />
+            </filesystem>
+
+            <sftp name="shared" host="${ivy.host}" user="${ivy.user.name}" userPassword="${ivy.password}" keyFile="${ivy.keyfile.path}" keyFilePassword="${ivy.keyfile.password}">
+                <artifact pattern="${ivy.repository.dir}/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+                <ivy pattern="${ivy.repository.dir}/[organisation]/[module]/[revision]/ivy-[revision].xml" />
+            </sftp>
+        </chain>
+    </resolvers>
+</ivysettings>
