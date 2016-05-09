@@ -3,8 +3,10 @@ package com.vaadin.tapio.googlemaps.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.ajaxloader.client.AjaxLoader;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.maps.client.LoadApi;
+import com.google.gwt.maps.client.MapTypeId;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.base.LatLng;
 import com.google.gwt.user.client.ui.Widget;
@@ -18,6 +20,7 @@ import com.vaadin.tapio.googlemaps.GoogleMap;
 import com.vaadin.tapio.googlemaps.client.events.InfoWindowClosedListener;
 import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MapMoveListener;
+import com.vaadin.tapio.googlemaps.client.events.MapTypeChangeListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
@@ -25,13 +28,14 @@ import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.tapio.googlemaps.client.rpcs.InfoWindowClosedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MapClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MapMovedRpc;
+import com.vaadin.tapio.googlemaps.client.rpcs.MapTypeChangedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MarkerClickedRpc;
 import com.vaadin.tapio.googlemaps.client.rpcs.MarkerDraggedRpc;
 
 @Connect(GoogleMap.class)
-public class GoogleMapConnector extends AbstractComponentConnector implements
-        MarkerClickListener, MapMoveListener, MapClickListener,
-        MarkerDragListener, InfoWindowClosedListener {
+public class GoogleMapConnector extends AbstractComponentConnector
+        implements MarkerClickListener, MapMoveListener, MapClickListener,
+        MarkerDragListener, InfoWindowClosedListener, MapTypeChangeListener {
 
     private static final long serialVersionUID = -357262975672050103L;
 
@@ -41,16 +45,18 @@ public class GoogleMapConnector extends AbstractComponentConnector implements
 
     private final List<GoogleMapInitListener> initListeners = new ArrayList<GoogleMapInitListener>();
 
-    private final MarkerClickedRpc markerClickedRpc = RpcProxy.create(
-            MarkerClickedRpc.class, this);
+    private final MarkerClickedRpc markerClickedRpc = RpcProxy
+            .create(MarkerClickedRpc.class, this);
     private final MapMovedRpc mapMovedRpc = RpcProxy.create(MapMovedRpc.class,
             this);
-    private final MapClickedRpc mapClickRpc = RpcProxy.create(
-            MapClickedRpc.class, this);
-    private final MarkerDraggedRpc markerDraggedRpc = RpcProxy.create(
-            MarkerDraggedRpc.class, this);
-    private final InfoWindowClosedRpc infoWindowClosedRpc = RpcProxy.create(
-            InfoWindowClosedRpc.class, this);
+    private final MapClickedRpc mapClickRpc = RpcProxy
+            .create(MapClickedRpc.class, this);
+    private final MarkerDraggedRpc markerDraggedRpc = RpcProxy
+            .create(MarkerDraggedRpc.class, this);
+    private final InfoWindowClosedRpc infoWindowClosedRpc = RpcProxy
+            .create(InfoWindowClosedRpc.class, this);
+    private final MapTypeChangedRpc mapTypeChangedRpc = RpcProxy
+            .create(MapTypeChangedRpc.class, this);
 
     public GoogleMapConnector() {
     }
@@ -85,6 +91,10 @@ public class GoogleMapConnector extends AbstractComponentConnector implements
             params = "APIKEY=" + getState().apiKey;
         }
 
+        if (getState().apiUrl != null) {
+            AjaxLoader.init(getState().apiKey, getState().apiUrl);
+        }
+
         LoadApi.go(onLoad, loadLibraries, false, language, params);
     }
 
@@ -96,6 +106,7 @@ public class GoogleMapConnector extends AbstractComponentConnector implements
         getWidget().setMapClickListener(this);
         getWidget().setMarkerDragListener(this);
         getWidget().setInfoWindowClosedListener(this);
+        getWidget().setMapTypeChangeListener(this);
         getLayoutManager().addElementResizeListener(getWidget().getElement(),
                 new ElementResizeListener() {
                     @Override
@@ -129,6 +140,7 @@ public class GoogleMapConnector extends AbstractComponentConnector implements
                 getState().center.getLon());
         getWidget().setCenter(center);
         getWidget().setZoom(getState().zoom);
+        getWidget().setTrafficLayerVisible(getState().trafficLayerVisible);
         getWidget().setMarkers(getState().markers.values());
         getWidget().setPolygonOverlays(getState().polygons);
         getWidget().setPolylineOverlays(getState().polylines);
@@ -163,8 +175,7 @@ public class GoogleMapConnector extends AbstractComponentConnector implements
         }
 
         if (getState().limitVisibleAreaBounds) {
-            getWidget().setVisibleAreaBoundLimits(
-                    getState().visibleAreaNELimit,
+            getWidget().setVisibleAreaBoundLimits(getState().visibleAreaNELimit,
                     getState().visibleAreaSWLimit);
         } else {
             getWidget().clearVisibleAreaBoundLimits();
@@ -192,7 +203,8 @@ public class GoogleMapConnector extends AbstractComponentConnector implements
     }
 
     @Override
-    public void markerDragged(GoogleMapMarker draggedMarker, LatLon oldPosition) {
+    public void markerDragged(GoogleMapMarker draggedMarker,
+            LatLon oldPosition) {
         markerDraggedRpc.markerDragged(draggedMarker.getId(),
                 draggedMarker.getPosition());
     }
@@ -204,13 +216,18 @@ public class GoogleMapConnector extends AbstractComponentConnector implements
 
     @Override
     public void mapMoved(int zoomLevel, LatLon center, LatLon boundsNE,
-                         LatLon boundsSW) {
+            LatLon boundsSW) {
         mapMovedRpc.mapMoved(zoomLevel, center, boundsNE, boundsSW);
     }
 
     @Override
     public void markerClicked(GoogleMapMarker clickedMarker) {
         markerClickedRpc.markerClicked(clickedMarker.getId());
+    }
+
+    @Override
+    public void mapTypeChanged(MapTypeId mapTypeId) {
+        mapTypeChangedRpc.mapTypeChanged(mapTypeId.toString());
     }
 
     public void addInitListener(GoogleMapInitListener listener) {
