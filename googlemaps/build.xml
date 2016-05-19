@@ -6,7 +6,7 @@
     <property file="${user.home}/futrix.properties" />
     <property file="${basedir}/conf/${user.name}.properties" />
     <property file="${basedir}/conf/build.properties"/>
-    <property name="project.version" value="1.2.2-futrix"/>
+    <property name="project.version" value="1.2.2-SNAPSHOT"/>
 
     <ivy:settings file="ivysettings.xml"/>
 
