@@ -11,6 +11,7 @@ import com.google.gwt.maps.client.LoadApi;
 import com.google.gwt.maps.client.MapTypeId;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.base.LatLng;
+import com.google.gwt.maps.client.events.MouseEvent;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorHierarchyChangeEvent;
@@ -237,8 +238,8 @@ public class GoogleMapConnector extends AbstractComponentContainerConnector
     }
 
     @Override
-    public void polygonClicked(GoogleMapPolygon clickedPolygon) {
-        polygonClickedRpc.polygonClicked(clickedPolygon.getId());
+    public void polygonClicked(GoogleMapPolygon clickedPolygon, double x, double y) {
+        polygonClickedRpc.polygonClicked(clickedPolygon.getId(), x, y);
     }
 
     @Override

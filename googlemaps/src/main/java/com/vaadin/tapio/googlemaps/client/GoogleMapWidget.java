@@ -20,6 +20,7 @@ import com.google.gwt.maps.client.MapTypeId;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.base.LatLng;
 import com.google.gwt.maps.client.base.LatLngBounds;
+import com.google.gwt.maps.client.base.Point;
 import com.google.gwt.maps.client.base.Size;
 import com.google.gwt.maps.client.events.center.CenterChangeMapEvent;
 import com.google.gwt.maps.client.events.center.CenterChangeMapHandler;
@@ -43,12 +44,18 @@ import com.google.gwt.maps.client.layers.TrafficLayer;
 import com.google.gwt.maps.client.mvc.MVCArray;
 import com.google.gwt.maps.client.overlays.Animation;
 import com.google.gwt.maps.client.overlays.InfoWindowOptions;
+import com.google.gwt.maps.client.overlays.MapCanvasProjection;
 import com.google.gwt.maps.client.overlays.Marker;
 import com.google.gwt.maps.client.overlays.MarkerOptions;
+import com.google.gwt.maps.client.overlays.OverlayView;
 import com.google.gwt.maps.client.overlays.Polygon;
 import com.google.gwt.maps.client.overlays.PolygonOptions;
 import com.google.gwt.maps.client.overlays.Polyline;
 import com.google.gwt.maps.client.overlays.PolylineOptions;
+import com.google.gwt.maps.client.overlays.overlayhandlers.OverlayViewMethods;
+import com.google.gwt.maps.client.overlays.overlayhandlers.OverlayViewOnAddHandler;
+import com.google.gwt.maps.client.overlays.overlayhandlers.OverlayViewOnDrawHandler;
+import com.google.gwt.maps.client.overlays.overlayhandlers.OverlayViewOnRemoveHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.Widget;
@@ -102,6 +109,7 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
     protected boolean mapOptionsChanged = false;
     protected boolean panningNeeded = false;
     protected TrafficLayer trafficLayer = null;
+    private OverlayView overlayView;
 
     public GoogleMapWidget() {
         setStyleName(CLASSNAME);
@@ -156,6 +164,20 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
                 if (mapTypeChangeListener != null) {
                     mapTypeChangeListener.mapTypeChanged(id);
                 }
+            }
+        });
+
+        this.overlayView = OverlayView.newInstance(map, new OverlayViewOnDrawHandler() {
+            @Override
+            public void onDraw(OverlayViewMethods methods) {
+            }
+        }, new OverlayViewOnAddHandler() {
+            @Override
+            public void onAdd(OverlayViewMethods methods) {
+            }
+        }, new OverlayViewOnRemoveHandler() {
+            @Override
+            public void onRemove(OverlayViewMethods methods) {
             }
         });
     }
@@ -531,7 +553,10 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
                 @Override
                 public void onEvent(ClickMapEvent event) {
                     if (polygonClickListener != null) {
-                        polygonClickListener.polygonClicked(overlay);
+                        final MapCanvasProjection projection = overlayView.getProjection();
+                        final Point pixel = projection.fromLatLngToContainerPixel(event.getMouseEvent().getLatLng());
+
+                        polygonClickListener.polygonClicked(overlay, pixel.getX(), pixel.getY());
                     }
                 }
             });

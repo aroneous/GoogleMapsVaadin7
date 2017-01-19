@@ -277,8 +277,8 @@ public class DemoUI extends UI {
 
         googleMap.addPolygonClickListener(new PolygonClickListener() {
             @Override
-            public void polygonClicked(GoogleMapPolygon clickedPolygon) {
-                Notification.show("Clicked polygon " + clickedPolygon.getId());
+            public void polygonClicked(GoogleMapPolygon clickedPolygon, double x, double y) {
+                Notification.show("Clicked polygon " + clickedPolygon.getId() + " at " + x + ", " + y);
                 googleMap.removePolygonOverlay(clickedPolygon);
 //                addPolyOverlayButton.setEnabled(true);
             }
