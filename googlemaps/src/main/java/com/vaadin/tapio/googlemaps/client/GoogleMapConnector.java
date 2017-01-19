@@ -238,7 +238,7 @@ public class GoogleMapConnector extends AbstractComponentContainerConnector
     }
 
     @Override
-    public void polygonClicked(GoogleMapPolygon clickedPolygon, double x, double y) {
+    public void polygonClicked(GoogleMapPolygon clickedPolygon, int x, int y) {
         polygonClickedRpc.polygonClicked(clickedPolygon.getId(), x, y);
     }
 

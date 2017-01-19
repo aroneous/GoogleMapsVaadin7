@@ -15,5 +15,5 @@ public interface PolygonClickListener extends Serializable {
      * @param x X coordinate of click position
      * @param y Y coordinate of click position
      */
-    void polygonClicked(GoogleMapPolygon clickedPolygon, double x, double y);
+    void polygonClicked(GoogleMapPolygon clickedPolygon, int x, int y);
 }

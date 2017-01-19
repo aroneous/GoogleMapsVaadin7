@@ -117,7 +117,7 @@ public class GoogleMap extends AbstractComponentContainer {
 
     private final PolygonClickedRpc polygonClickedRpc = new PolygonClickedRpc() {
         @Override
-        public void polygonClicked(long polygonId, double x, double y) {
+        public void polygonClicked(long polygonId, int x, int y) {
 
             GoogleMapPolygon marker = getState().polygons.get(polygonId);
             for (PolygonClickListener listener : polygonClickListeners) {

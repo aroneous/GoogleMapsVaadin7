@@ -555,8 +555,10 @@ public class GoogleMapWidget extends FlowPanel implements RequiresResize {
                     if (polygonClickListener != null) {
                         final MapCanvasProjection projection = overlayView.getProjection();
                         final Point pixel = projection.fromLatLngToContainerPixel(event.getMouseEvent().getLatLng());
+                        final int x = map.getAbsoluteLeft() + (int) pixel.getX();
+                        final int y = map.getAbsoluteTop() + (int) pixel.getY();
 
-                        polygonClickListener.polygonClicked(overlay, pixel.getX(), pixel.getY());
+                        polygonClickListener.polygonClicked(overlay, x, y);
                     }
                 }
             });
