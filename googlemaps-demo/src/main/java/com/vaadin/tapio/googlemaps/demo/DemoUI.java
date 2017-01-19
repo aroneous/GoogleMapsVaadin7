@@ -14,6 +14,7 @@ import com.vaadin.tapio.googlemaps.client.events.MapClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MapMoveListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerClickListener;
 import com.vaadin.tapio.googlemaps.client.events.MarkerDragListener;
+import com.vaadin.tapio.googlemaps.client.events.PolygonClickListener;
 import com.vaadin.tapio.googlemaps.client.layers.GoogleMapKmlLayer;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapInfoWindow;
 import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
@@ -234,7 +235,7 @@ public class DemoUI extends UI {
             });
         buttonLayoutRow1.addComponent(componentToMaariaInfoWindowButton);
 
-        Button addPolyOverlayButton = new Button("Add overlay over Luonnonmaa",
+        final Button addPolyOverlayButton = new Button("Add overlay over Luonnonmaa",
             new Button.ClickListener() {
                 @Override
                 public void buttonClick(ClickEvent event) {
@@ -249,10 +250,39 @@ public class DemoUI extends UI {
                         "#ae1f1f", 0.8, "#194915", 0.5, 3);
                     overlay.setTooltip("Luonnonmaa");
                     googleMap.addPolygonOverlay(overlay);
-                    event.getButton().setEnabled(false);
+//                    event.getButton().setEnabled(false);
                 }
             });
         buttonLayoutRow2.addComponent(addPolyOverlayButton);
+
+        final Button addPolyOverlayButton2 = new Button("Add overlay over Something",
+            new Button.ClickListener() {
+                @Override
+                public void buttonClick(ClickEvent event) {
+                    ArrayList<LatLon> points = new ArrayList<LatLon>();
+                    points.add(new LatLon(60.484715, 22.023706));
+                    points.add(new LatLon(60.446636, 22.041387));
+                    points.add(new LatLon(60.422496, 22.09546));
+                    points.add(new LatLon(60.427326, 22.16464));
+                    points.add(new LatLon(60.446467, 22.164297));
+
+                    GoogleMapPolygon overlay = new GoogleMapPolygon(points,
+                        "#4e1f7f", 0.8, "#194915", 0.5, 3);
+                    overlay.setTooltip("God Only Knows");
+                    googleMap.addPolygonOverlay(overlay);
+//                    event.getButton().setEnabled(false);
+                }
+            });
+        buttonLayoutRow2.addComponent(addPolyOverlayButton2);
+
+        googleMap.addPolygonClickListener(new PolygonClickListener() {
+            @Override
+            public void polygonClicked(GoogleMapPolygon clickedPolygon) {
+                Notification.show("Clicked polygon " + clickedPolygon.getId());
+                googleMap.removePolygonOverlay(clickedPolygon);
+//                addPolyOverlayButton.setEnabled(true);
+            }
+        });
 
         Button addPolyLineButton = new Button("Draw line from Turku to Raisio",
             new Button.ClickListener() {
